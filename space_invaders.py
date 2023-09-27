@@ -41,14 +41,23 @@ player_y = screen_height - playerHeight - player_gap
 # Пуля
 bulletImg = pg.image.load('src/bullet.png')
 bulletWidth, bulletHeight = bulletImg.get_size()
-bullet_x = player_x + bulletWidth / 2
-bullet_y = player_y - bulletHeight
+bullet_x = 0
+bullet_y = 0
 bullet_dy = -5
-bullet_isVisible = False
+bullet_isAlive = False
+
+# Противник
+enemyImg = pg.image.load('src/enemy.png')
+enemyWidth, enemyHeight = bulletImg.get_size()
+enemy_dx = 0
+enemy_dy = 2
+enemy_x = 0
+enemy_y = 0
 
 def model_update():
     player_model()
     bullet_model()
+    enemy_model()
 def player_model():
     global  player_x
     player_x += player_dx
@@ -57,20 +66,43 @@ def player_model():
     if player_x > screen_width - playerWidth:
         player_x = screen_width - playerWidth
 def bullet_model():
-    global bullet_y, bullet_isVisible
+    """ Изменение положения пули """
+    global bullet_y, bullet_isAlive
     bullet_y += bullet_dy
     if bullet_y < 0:
-        bullet_isVisible = False
+        bullet_isAlive = False
+
+def enemy_model():
+    """ Изменение положения противника, рассчет поражений """
+    global enemy_x, enemy_y, bullet_isAlive
+    enemy_x += enemy_dx
+    enemy_y += enemy_dy
+    if enemy_y > screen_height:
+        enemy_create()
+
+    if bullet_isAlive:
+        recEnemy = pg.Rect(enemy_x, enemy_y, enemyWidth, enemyHeight)
+        recBullet = pg.Rect(bullet_x, bullet_y, bulletWidth, bulletHeight)
+        if recEnemy.colliderect(recBullet):
+            print("BANG!")
+            enemy_create()
+            bullet_isAlive = False
 def bullet_create():
-    global bullet_x, bullet_y, bullet_isVisible
+    global bullet_x, bullet_y, bullet_isAlive
     bullet_x = player_x + bulletWidth / 2
     bullet_y = player_y - bulletHeight
-    bullet_isVisible = True
+    bullet_isAlive = True
+
+def enemy_create():
+    global enemy_x, enemy_y
+    enemy_x = screen_width / 2 - enemyWidth / 2
+    enemy_y = 0
 
 def display_redraw():
     display.blit(bg_img, (0, 0))
     display.blit(playerImg, (player_x, player_y))
-    if bullet_isVisible:
+    display.blit(enemyImg, (enemy_x, enemy_y))
+    if bullet_isAlive:
         display.blit(bulletImg, (bullet_x, bullet_y))
     pg.display.update()
 
@@ -94,13 +126,13 @@ def event_processing():
             player_dx = 0
         if event.type == pg.MOUSEBUTTONDOWN:
             key = pg.mouse.get_pressed()
-            print(f'{key[0]}')
-            if not bullet_isVisible:
+            if key[0] and not(bullet_isAlive):
                 bullet_create()
 
     clock.tick(FPS)
     return isRunning
 
+enemy_create()
 isRunning = True
 isHiddingDaniil = False
 while isRunning:
