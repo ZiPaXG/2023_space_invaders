@@ -38,22 +38,23 @@ player_dx = 0
 player_x = screen_width/2 - playerWidth/2
 player_y = screen_height - playerHeight - player_gap
 
-
-isRunning = True
-isHiddingDaniil = False
-while isRunning:
+def model_update():
+    player_model()
+def player_model():
+    global  player_x
     player_x += player_dx
     if player_x < 0 :
         player_x = 0
     if player_x > screen_width - playerWidth:
         player_x = screen_width - playerWidth
-
-
-    # redraw
+def display_redraw():
     display.blit(bg_img, (0, 0))
     display.blit(playerImg, (player_x, player_y))
     pg.display.update()
 
+def event_processing():
+    global player_dx
+    isRunning = True
     for event in pg.event.get():
         # Нажатие на крестик
         if (event.type == pg.QUIT):
@@ -68,11 +69,16 @@ while isRunning:
             if event.key == pg.K_d or event.key == pg.K_RIGHT:
                 player_dx = player_velocity
         if event.type == pg.KEYUP:
-            if event.key == pg.K_a or event.key == pg.K_LEFT:
-                player_dx = 0
-            elif event.key == pg.K_d or event.key == pg.K_RIGHT:
-                player_dx = 0
-
-
+            player_dx = 0
     clock.tick(FPS)
+    return isRunning
+
+isRunning = True
+isHiddingDaniil = False
+while isRunning:
+    model_update()
+    display_redraw()
+    isRunning = event_processing()
+
+
 pg.quit()
