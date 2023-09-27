@@ -43,10 +43,17 @@ isRunning = True
 isHiddingDaniil = False
 while isRunning:
     player_x += player_dx
-    display.blit(bg_img, (0, 0))
+    if player_x < 0 :
+        player_x = 0
+    if player_x > screen_width - playerWidth:
+        player_x = screen_width - playerWidth
 
+
+    # redraw
+    display.blit(bg_img, (0, 0))
     display.blit(playerImg, (player_x, player_y))
     pg.display.update()
+
     for event in pg.event.get():
         # Нажатие на крестик
         if (event.type == pg.QUIT):
@@ -63,7 +70,7 @@ while isRunning:
         if event.type == pg.KEYUP:
             if event.key == pg.K_a or event.key == pg.K_LEFT:
                 player_dx = 0
-            if event.key == pg.K_d or event.key == pg.K_RIGHT:
+            elif event.key == pg.K_d or event.key == pg.K_RIGHT:
                 player_dx = 0
 
 
