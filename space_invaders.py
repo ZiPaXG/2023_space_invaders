@@ -1,5 +1,6 @@
 import pygame as pg
 import pygame.time
+import random
 
 pg.init()
 screen_width, screen_height = 800, 600
@@ -94,9 +95,11 @@ def bullet_create():
     bullet_isAlive = True
 
 def enemy_create():
+    """  Создаем противника в рандомных координатах """
     global enemy_x, enemy_y
-    enemy_x = screen_width / 2 - enemyWidth / 2
+    enemy_x = random.randint(0, screen_width - enemyWidth)
     enemy_y = 0
+    print(f'{enemy_x=}')
 
 def display_redraw():
     display.blit(bg_img, (0, 0))
@@ -132,6 +135,7 @@ def event_processing():
     clock.tick(FPS)
     return isRunning
 
+# random.seed(77)
 enemy_create()
 isRunning = True
 isHiddingDaniil = False
