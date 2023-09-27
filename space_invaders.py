@@ -1,30 +1,6 @@
 import pygame as pg
 import pygame.time
 
-#ДЗ 3 lvl
-
-def changeStateLetter(key, strN):
-    strN = list(strN)
-    indexElem = listLetter.index(key)
-    lettersStates = allLettersStates[allLetterName[indexElem]][1]
-    if allLettersStates[allLetterName[indexElem]][2] == False:
-        lettersStates[lettersStates.index(True)] = False
-        if lettersStates.count(True) == 0:
-            allLettersStates[allLetterName[indexElem]][2] = True
-    else:
-        lettersStates[lettersStates.index(False)] = True
-        if lettersStates.count(False) == 0:
-            allLettersStates[allLetterName[indexElem]][2] = False
-
-    for k, v in allLettersStates.items():
-        for i in range(len(v[1])):
-            if v[1][i]:
-                strN[v[0][i]] = k
-            else:
-                strN[v[0][i]] = " "
-
-    return ''.join(strN)
-
 pg.init()
 screen_width, screen_height = 800, 600
 FPS = 24
@@ -56,32 +32,20 @@ pg.display.set_caption('Space Invaders')
 # Игрок
 playerImg = pg.image.load('src/player.png')
 playerWidth, playerHeight = playerImg.get_size()
+player_gap = 10
+player_velocity = 10
+player_dx = 0
+player_x = screen_width/2 - playerWidth/2
+player_y = screen_height - playerHeight - player_gap
 
-# ДЗ 1 lvl
-listLetter = [pg.K_l, pg.K_f, pg.K_y, pg.K_b, pg.K_b, pg.K_k]
-
-# Этот список нужен для того, чтобы обращаться к словарю allLettersStates, чтобы изменить состояние буквы на True или False
-allLetterName = ["д", "а", "н", "и", "и", "л"]
-
-# Этот словарь содержит информацию о том:
-# видна ли буква,
-# список индексов, где располагается буква (буква может повторяться),
-# а также False, если при нажатии на клавишу буква исчезает, или True, если при нажатии на клавишу буква появляется
-allLettersStates = {
-    "д" : [[0], [True], False],
-    "а" : [[1], [True], False],
-    "н" : [[2], [True], False],
-    "и" : [[3, 4], [True, True], False],
-    "л" : [[5], [True], False]
-}
-strName = "даниил"
-strNameDaniil = sysfont.render(strName.capitalize(), True, 'red')
-w, h = strNameDaniil.get_size()
-a = display.blit(strNameDaniil, (screen_width / 2 - w / 2, screen_height - h))
 
 isRunning = True
 isHiddingDaniil = False
 while isRunning:
+    player_x += player_dx
+    display.blit(bg_img, (0, 0))
+
+    display.blit(playerImg, (player_x, player_y))
     pg.display.update()
     for event in pg.event.get():
         # Нажатие на крестик
@@ -89,21 +53,19 @@ while isRunning:
             isRunning = False
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_q:
-                display.blit(bg_img, (0, 0))
-            # ДЗ 2 lvl
-            #if event.key == pg.K_SPACE or event.key == pg.K_l:
-            #    if isHiddingDaniil:
-            #        isHiddingDaniil = False
-            #        display.blit(strNameDaniil, (screen_width / 2 - w / 2, screen_height - h))
-            #    else:
-            #        isHiddingDaniil = True
-            #        display.blit(bg_img, (0, 0))
-            # -----------------------------------------------------------------------------
-            # ДЗ 3 lvl
-            if event.key in listLetter:
-                strName = changeStateLetter(event.key, strName)
-                strNameDaniil = sysfont.render(strName.capitalize(), True, 'red')
-                display.blit(bg_img, (0, 0))
-                display.blit(strNameDaniil, (screen_width / 2 - w / 2, screen_height - h))
+                isRunning = False
+
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_a or event.key == pg.K_LEFT:
+                player_dx = -player_velocity
+            if event.key == pg.K_d or event.key == pg.K_RIGHT:
+                player_dx = player_velocity
+        if event.type == pg.KEYUP:
+            if event.key == pg.K_a or event.key == pg.K_LEFT:
+                player_dx = 0
+            if event.key == pg.K_d or event.key == pg.K_RIGHT:
+                player_dx = 0
+
+
     clock.tick(FPS)
 pg.quit()
