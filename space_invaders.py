@@ -71,7 +71,7 @@ def player_model():
         recEnemy = pg.Rect(enemy_x, enemy_y, enemyWidth, enemyHeight)
         recPlayer = pg.Rect(player_x, player_y, playerWidth, playerHeight)
         if recEnemy.colliderect(recPlayer):
-            if countHP == 0:
+            if countHP == 1:
                 isGameOver = True
             else:
                 countHP -= 1
@@ -129,7 +129,9 @@ def display_redraw():
         for i in range(countHP):
             display.blit(hpImg, (500 + i * 100, 40))
     else:
+        display.blit(bg_img, (0, 0))
         display.blit(game_over_text, (screen_width / 2 - w / 2, screen_height / 2 - h / 2))
+
     pg.display.update()
 
 # События
