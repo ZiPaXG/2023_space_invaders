@@ -53,21 +53,15 @@ enemy_dy = 2
 enemy_x = 0
 enemy_y = 0
 
-
-def setGameOver():
-    global isGameOver
-    print("GAME OVER")
-    display.blit(game_over_text, (screen_width / 2 - w / 2, screen_height / 2 - h / 2))
-    isGameOver = True
-
 # Логика моделей
 def model_update():
-    player_model()
-    bullet_model()
-    enemy_model()
+    if isGameOver == False:
+        player_model()
+        bullet_model()
+        enemy_model()
 
 def player_model():
-    global  player_x
+    global  player_x, isGameOver
     player_x += player_dx
     if player_x < 0 :
         player_x = 0
@@ -78,7 +72,7 @@ def player_model():
         recEnemy = pg.Rect(enemy_x, enemy_y, enemyWidth, enemyHeight)
         recPlayer = pg.Rect(player_x, player_y, playerWidth, playerHeight)
         if recEnemy.colliderect(recPlayer):
-            setGameOver()
+            isGameOver = True
 
 def bullet_model():
     """ Изменение положения пули """
@@ -120,13 +114,16 @@ def enemy_create():
 
 # Отрисовка кадра
 def display_redraw():
-    display.blit(bg_img, (0, 0))
-    display.blit(playerImg, (player_x, player_y))
-    display.blit(enemyImg, (enemy_x, enemy_y))
-    if bullet_isAlive:
-        display.blit(bulletImg, (bullet_x, bullet_y))
-    score_img = sysfont.render(f"Score: {player_score}", True, 'white')
-    display.blit(score_img, (40, 40))
+    if isGameOver == False:
+        display.blit(bg_img, (0, 0))
+        display.blit(playerImg, (player_x, player_y))
+        display.blit(enemyImg, (enemy_x, enemy_y))
+        if bullet_isAlive:
+            display.blit(bulletImg, (bullet_x, bullet_y))
+        score_img = sysfont.render(f"Score: {player_score}", True, 'white')
+        display.blit(score_img, (40, 40))
+    else:
+        display.blit(game_over_text, (screen_width / 2 - w / 2, screen_height / 2 - h / 2))
     pg.display.update()
 
 # События
@@ -164,5 +161,4 @@ while isRunning:
     model_update()
     display_redraw()
     isRunning = event_processing()
-
 pg.quit()
