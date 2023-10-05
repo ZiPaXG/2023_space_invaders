@@ -15,13 +15,9 @@ icon_img = pg.image.load('src/ufo.png')
 
 display = pg.display.set_mode((screen_width, screen_height))
 
-#display.fill('blue', (0, 0, screen_width, screen_height))
-display.blit(bg_img, (0, 0))
-
 # Game over
 game_over_text = font.render('Game Over', True, 'red')
 w, h = game_over_text.get_size()
-
 
 pg.display.set_icon(icon_img)
 pg.display.set_caption('Space Invaders')
@@ -36,6 +32,7 @@ player_dx = 0
 player_x = screen_width/2 - playerWidth/2
 player_y = screen_height - playerHeight - player_gap
 countHP = 3
+hpImg = pg.image.load('src/hp.png')
 isGameOver = False
 
 # Пуля
@@ -129,6 +126,8 @@ def display_redraw():
             display.blit(bulletImg, (bullet_x, bullet_y))
         score_img = sysfont.render(f"Score: {player_score}", True, 'white')
         display.blit(score_img, (40, 40))
+        for i in range(countHP):
+            display.blit(hpImg, (500 + i * 100, 40))
     else:
         display.blit(game_over_text, (screen_width / 2 - w / 2, screen_height / 2 - h / 2))
     pg.display.update()
