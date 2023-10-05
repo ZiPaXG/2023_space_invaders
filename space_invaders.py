@@ -4,7 +4,7 @@ import random
 
 pg.init()
 screen_width, screen_height = 800, 600
-FPS = 24
+FPS = 60
 clock = pygame.time.Clock()
 
 sysfont = pg.font.SysFont('arial', 34)
@@ -18,14 +18,10 @@ display = pg.display.set_mode((screen_width, screen_height))
 #display.fill('blue', (0, 0, screen_width, screen_height))
 display.blit(bg_img, (0, 0))
 
-# Score
-#text_img = sysfont.render('Score 123', True, 'white')
-#display.blit(text_img, (100, 50))
-
 # Game over
-#game_over_text = font.render('Game Over', True, 'red')
-#w, h = game_over_text.get_size()
-#display.blit(game_over_text, (screen_width/2 - w/2, screen_height / 2 - h/2))
+game_over_text = font.render('Game Over', True, 'red')
+w, h = game_over_text.get_size()
+
 
 pg.display.set_icon(icon_img)
 pg.display.set_caption('Space Invaders')
@@ -33,11 +29,13 @@ pg.display.set_caption('Space Invaders')
 # Игрок
 playerImg = pg.image.load('src/player.png')
 playerWidth, playerHeight = playerImg.get_size()
+player_score = 0
 player_gap = 10
-player_velocity = 10
+player_velocity = 5
 player_dx = 0
 player_x = screen_width/2 - playerWidth/2
 player_y = screen_height - playerHeight - player_gap
+isGameOver = False
 
 # Пуля
 bulletImg = pg.image.load('src/bullet.png')
@@ -55,10 +53,19 @@ enemy_dy = 2
 enemy_x = 0
 enemy_y = 0
 
+
+def setGameOver():
+    global isGameOver
+    print("GAME OVER")
+    display.blit(game_over_text, (screen_width / 2 - w / 2, screen_height / 2 - h / 2))
+    isGameOver = True
+
+# Логика моделей
 def model_update():
     player_model()
     bullet_model()
     enemy_model()
+
 def player_model():
     global  player_x
     player_x += player_dx
@@ -66,6 +73,13 @@ def player_model():
         player_x = 0
     if player_x > screen_width - playerWidth:
         player_x = screen_width - playerWidth
+
+    if isGameOver == False:
+        recEnemy = pg.Rect(enemy_x, enemy_y, enemyWidth, enemyHeight)
+        recPlayer = pg.Rect(player_x, player_y, playerWidth, playerHeight)
+        if recEnemy.colliderect(recPlayer):
+            setGameOver()
+
 def bullet_model():
     """ Изменение положения пули """
     global bullet_y, bullet_isAlive
@@ -75,7 +89,7 @@ def bullet_model():
 
 def enemy_model():
     """ Изменение положения противника, рассчет поражений """
-    global enemy_x, enemy_y, bullet_isAlive
+    global enemy_x, enemy_y, bullet_isAlive, player_score
     enemy_x += enemy_dx
     enemy_y += enemy_dy
     if enemy_y > screen_height:
@@ -85,9 +99,12 @@ def enemy_model():
         recEnemy = pg.Rect(enemy_x, enemy_y, enemyWidth, enemyHeight)
         recBullet = pg.Rect(bullet_x, bullet_y, bulletWidth, bulletHeight)
         if recEnemy.colliderect(recBullet):
-            print("BANG!")
             enemy_create()
             bullet_isAlive = False
+            player_score += 50
+            print(player_score)
+
+# Создание моделей
 def bullet_create():
     global bullet_x, bullet_y, bullet_isAlive
     bullet_x = player_x + bulletWidth / 2
@@ -101,14 +118,18 @@ def enemy_create():
     enemy_y = 0
     print(f'{enemy_x=}')
 
+# Отрисовка кадра
 def display_redraw():
     display.blit(bg_img, (0, 0))
     display.blit(playerImg, (player_x, player_y))
     display.blit(enemyImg, (enemy_x, enemy_y))
     if bullet_isAlive:
         display.blit(bulletImg, (bullet_x, bullet_y))
+    score_img = sysfont.render(f"Score: {player_score}", True, 'white')
+    display.blit(score_img, (40, 40))
     pg.display.update()
 
+# События
 def event_processing():
     global player_dx
     isRunning = True
@@ -143,6 +164,5 @@ while isRunning:
     model_update()
     display_redraw()
     isRunning = event_processing()
-
 
 pg.quit()
