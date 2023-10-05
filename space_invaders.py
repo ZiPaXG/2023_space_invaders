@@ -35,6 +35,7 @@ player_velocity = 5
 player_dx = 0
 player_x = screen_width/2 - playerWidth/2
 player_y = screen_height - playerHeight - player_gap
+countHP = 3
 isGameOver = False
 
 # Пуля
@@ -52,6 +53,7 @@ enemy_dx = 0
 enemy_dy = 2
 enemy_x = 0
 enemy_y = 0
+enemy_isAlive = False
 
 # Логика моделей
 def model_update():
@@ -61,7 +63,7 @@ def model_update():
         enemy_model()
 
 def player_model():
-    global  player_x, isGameOver
+    global  player_x, isGameOver, countHP, enemy_isAlive
     player_x += player_dx
     if player_x < 0 :
         player_x = 0
@@ -72,7 +74,12 @@ def player_model():
         recEnemy = pg.Rect(enemy_x, enemy_y, enemyWidth, enemyHeight)
         recPlayer = pg.Rect(player_x, player_y, playerWidth, playerHeight)
         if recEnemy.colliderect(recPlayer):
-            isGameOver = True
+            if countHP == 0:
+                isGameOver = True
+            else:
+                countHP -= 1
+                enemy_isAlive = False
+
 
 def bullet_model():
     """ Изменение положения пули """
@@ -86,7 +93,7 @@ def enemy_model():
     global enemy_x, enemy_y, bullet_isAlive, player_score
     enemy_x += enemy_dx
     enemy_y += enemy_dy
-    if enemy_y > screen_height:
+    if enemy_y > screen_height or enemy_isAlive == False:
         enemy_create()
 
     if bullet_isAlive:
@@ -96,7 +103,6 @@ def enemy_model():
             enemy_create()
             bullet_isAlive = False
             player_score += 50
-            print(player_score)
 
 # Создание моделей
 def bullet_create():
@@ -107,17 +113,18 @@ def bullet_create():
 
 def enemy_create():
     """  Создаем противника в рандомных координатах """
-    global enemy_x, enemy_y
+    global enemy_x, enemy_y, enemy_isAlive
     enemy_x = random.randint(0, screen_width - enemyWidth)
     enemy_y = 0
-    print(f'{enemy_x=}')
+    enemy_isAlive = True
 
 # Отрисовка кадра
 def display_redraw():
     if isGameOver == False:
         display.blit(bg_img, (0, 0))
         display.blit(playerImg, (player_x, player_y))
-        display.blit(enemyImg, (enemy_x, enemy_y))
+        if enemy_isAlive:
+            display.blit(enemyImg, (enemy_x, enemy_y))
         if bullet_isAlive:
             display.blit(bulletImg, (bullet_x, bullet_y))
         score_img = sysfont.render(f"Score: {player_score}", True, 'white')
