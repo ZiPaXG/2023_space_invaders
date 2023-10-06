@@ -19,6 +19,9 @@ display = pg.display.set_mode((screen_width, screen_height))
 game_over_text = font.render('Game Over', True, 'red')
 w, h = game_over_text.get_size()
 
+pause_text = font.render('Pause', True, 'white')
+wPause, hPause = pause_text.get_size()
+
 pg.display.set_icon(icon_img)
 pg.display.set_caption('Space Invaders')
 
@@ -34,6 +37,7 @@ player_y = screen_height - playerHeight - player_gap
 countHP = 3
 hpImg = pg.image.load('src/hp.png')
 isGameOver = False
+isPaused = False
 
 # Пуля
 bulletImg = pg.image.load('src/bullet.png')
@@ -54,7 +58,7 @@ enemy_isAlive = False
 
 # Логика моделей
 def model_update():
-    if isGameOver == False:
+    if isGameOver == False and isPaused == False:
         player_model()
         bullet_model()
         enemy_model()
@@ -117,7 +121,7 @@ def enemy_create():
 
 # Отрисовка кадра
 def display_redraw():
-    if isGameOver == False:
+    if not isGameOver and not isPaused:
         display.blit(bg_img, (0, 0))
         display.blit(playerImg, (player_x, player_y))
         if enemy_isAlive:
@@ -128,15 +132,16 @@ def display_redraw():
         display.blit(score_img, (40, 40))
         for i in range(countHP):
             display.blit(hpImg, (500 + i * 100, 40))
-    else:
+    elif isGameOver:
         display.blit(bg_img, (0, 0))
         display.blit(game_over_text, (screen_width / 2 - w / 2, screen_height / 2 - h / 2))
-
+    else:
+        display.blit(pause_text, (screen_width / 2 - wPause / 2, screen_height / 2 - hPause / 2))
     pg.display.update()
 
 # События
 def event_processing():
-    global player_dx
+    global player_dx, isPaused
     isRunning = True
     for event in pg.event.get():
         # Нажатие на крестик
@@ -151,6 +156,8 @@ def event_processing():
                 player_dx = -player_velocity
             if event.key == pg.K_d or event.key == pg.K_RIGHT:
                 player_dx = player_velocity
+            if event.key == pg.K_p and not isGameOver:
+                isPaused = not isPaused
         if event.type == pg.KEYUP:
             player_dx = 0
         if event.type == pg.MOUSEBUTTONDOWN:
