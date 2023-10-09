@@ -53,6 +53,7 @@ class Game:
         elif self.isGameOver:
             self.display.blit(self.bg_img, (0, 0))
             self.display.blit(self.game_over_text, (self.screen_width / 2 - self.w / 2, self.screen_height / 2 - self.h / 2))
+            self.gameSound.fadeout(1000)
         else:
             self.display.blit(self.pause_text, (self.screen_width / 2 - self.wPause / 2, self.screen_height / 2 - self.hPause / 2))
         pg.display.update()
@@ -88,7 +89,7 @@ class Game:
     def start(self, pg, enemy, player, bullet):
         isRunning = True
         while isRunning:
-            if not mixer.get_busy() and not self.isPaused:
+            if not mixer.get_busy() and not self.isPaused and not self.isGameOver:
                 self.gameSound.play()
             self.model_update(pg, player, enemy, bullet)
             self.display_redraw(pg, player, enemy, bullet)
