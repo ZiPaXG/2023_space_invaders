@@ -1,4 +1,4 @@
-import pygame.mixer
+from pygame import mixer
 
 
 class Game:
@@ -22,9 +22,8 @@ class Game:
         pg.display.set_caption('Space Invaders')
 
         """ Создание фоновой музыки """
-        pygame.mixer.init()
-        self.gameSound = pygame.mixer.Sound(gameMusic)
-        pygame.mixer.music.set_volume(0.4)
+        self.gameSound = mixer.Sound(gameMusic)
+        self.gameSound.set_volume(0.4)
 
         """ Создание игровых процессов """
         self.isGameOver = False
@@ -75,6 +74,7 @@ class Game:
                     player.player_dx = player.player_velocity
                 if event.key == pg.K_p and not self.isGameOver:
                     self.isPaused = not self.isPaused
+                    self.gameSound.fadeout(500)
             if event.type == pg.KEYUP:
                 player.player_dx = 0
             if event.type == pg.MOUSEBUTTONDOWN:
@@ -88,7 +88,7 @@ class Game:
     def start(self, pg, enemy, player, bullet):
         isRunning = True
         while isRunning:
-            if not pygame.mixer.get_busy():
+            if not mixer.get_busy() and not self.isPaused:
                 self.gameSound.play()
             self.model_update(pg, player, enemy, bullet)
             self.display_redraw(pg, player, enemy, bullet)

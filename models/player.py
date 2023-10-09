@@ -1,4 +1,5 @@
-import pygame.mixer
+from pygame import mixer
+
 
 class Player:
     def __init__(self, pg, game, srcImg, countHP, speed, srcHP, explosionMusic):
@@ -12,7 +13,8 @@ class Player:
         self.player_y = game.screen_height - self.playerHeight - self.player_gap
         self.countHP = countHP
         self.hpImg = pg.image.load(srcHP)
-        self.explosionSound = pygame.mixer.Sound(explosionMusic)
+        self.explosionSound = mixer.Sound(explosionMusic)
+        self.explosionSound.set_volume(0.4)
 
     def update_model(self, pg, game, enemy):
         self.player_x += self.player_dx

@@ -1,6 +1,5 @@
 import random
 
-
 class Enemy:
     def __init__(self, pg, srcImg, speed):
         self.enemyImg = pg.image.load(srcImg)

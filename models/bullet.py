@@ -1,4 +1,4 @@
-import pygame.mixer
+from pygame import mixer
 
 class Bullet:
     def __init__(self, pg, srcImg, speed, laserMusic):
@@ -8,7 +8,8 @@ class Bullet:
         self.bullet_y = 0
         self.bullet_dy = -speed
         self.bullet_isAlive = False
-        self.laserSound = pygame.mixer.Sound(laserMusic)
+        self.laserSound = mixer.Sound(laserMusic)
+        self.laserSound.set_volume(0.4)
 
     def update_model(self):
         self.bullet_y += self.bullet_dy
