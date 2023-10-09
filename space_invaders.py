@@ -3,16 +3,17 @@ from models.game import Game
 from models.player import Player
 from models.enemy import Enemy
 from models.bullet import Bullet
+import os
 
-
+path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'src')
 # Игра
-game = Game(pg, "2023_space_invaders/src/background.wav")
+game = Game(pg, f'{path}\\background.wav', path)
 # Игрок
-player = Player(pg, game, '2023_space_invaders/src/player.png', 3, 5, '2023_space_invaders/src/hp.png', "2023_space_invaders/src/explosion.wav")
+player = Player(pg, game, f'{path}\\player.png', 3, 5, f'{path}\\hp.png', f'{path}\\explosion.wav')
 # Пуля
-bullet = Bullet(pg, '2023_space_invaders/src/bullet.png', 5, "2023_space_invaders/src/laser.wav")
+bullet = Bullet(pg, f'{path}\\bullet.png', 5, f'{path}\\laser.wav')
 # Противник
-enemy = Enemy(pg, '2023_space_invaders/src/enemy.png', 2)
+enemy = Enemy(pg, f'{path}\\enemy.png', 2)
 
 
 game.start(pg, enemy, player, bullet)

@@ -2,7 +2,7 @@ from pygame import mixer
 
 
 class Game:
-    def __init__(self, pg, gameMusic):
+    def __init__(self, pg, gameMusic, path):
         pg.init()
 
         """ Создание дисплея с настройками """
@@ -10,9 +10,9 @@ class Game:
         self.FPS = 60
         self.clock = pg.time.Clock()
         self.sysfont = pg.font.SysFont('arial', 34)
-        self.font = pg.font.Font('2023_space_invaders/src/04B_19.TTF', 48)
-        self.bg_img = pg.image.load('2023_space_invaders/src/background.png')
-        self.icon_img = pg.image.load('2023_space_invaders/src/ufo.png')
+        self.font = pg.font.Font(f'{path}\\04B_19.TTF', 48)
+        self.bg_img = pg.image.load(f'{path}\\background.png')
+        self.icon_img = pg.image.load(f'{path}\\ufo.png')
         self.display = pg.display.set_mode((self.screen_width, self.screen_height))
         self.game_over_text = self.font.render('Game Over', True, 'red')
         self.w, self.h = self.game_over_text.get_size()
