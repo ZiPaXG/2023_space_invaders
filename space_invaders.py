@@ -6,13 +6,13 @@ from models.bullet import Bullet
 
 
 # Игра
-game = Game(pg)
+game = Game(pg, "2023_space_invaders/src/background.wav")
 # Игрок
-player = Player(pg, game, 'src/player.png', 3, 5, 'src/hp.png')
+player = Player(pg, game, '2023_space_invaders/src/player.png', 3, 5, '2023_space_invaders/src/hp.png', "2023_space_invaders/src/explosion.wav")
 # Пуля
-bullet = Bullet(pg, 'src/bullet.png', 5)
+bullet = Bullet(pg, '2023_space_invaders/src/bullet.png', 5, "2023_space_invaders/src/laser.wav")
 # Противник
-enemy = Enemy(pg, 'src/enemy.png', 2)
+enemy = Enemy(pg, '2023_space_invaders/src/enemy.png', 2)
 
 
 game.start(pg, enemy, player, bullet)

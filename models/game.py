@@ -1,15 +1,18 @@
+import pygame.mixer
+
+
 class Game:
-    def __init__(self, pg):
+    def __init__(self, pg, gameMusic):
         pg.init()
+
+        """ Создание дисплея с настройками """
         self.screen_width, self.screen_height = 800, 600
         self.FPS = 60
         self.clock = pg.time.Clock()
-        self.isGameOver = False
-        self.isPaused = False
         self.sysfont = pg.font.SysFont('arial', 34)
-        self.font = pg.font.Font('src/04B_19.TTF', 48)
-        self.bg_img = pg.image.load('src/background.png')
-        self.icon_img = pg.image.load('src/ufo.png')
+        self.font = pg.font.Font('2023_space_invaders/src/04B_19.TTF', 48)
+        self.bg_img = pg.image.load('2023_space_invaders/src/background.png')
+        self.icon_img = pg.image.load('2023_space_invaders/src/ufo.png')
         self.display = pg.display.set_mode((self.screen_width, self.screen_height))
         self.game_over_text = self.font.render('Game Over', True, 'red')
         self.w, self.h = self.game_over_text.get_size()
@@ -17,6 +20,16 @@ class Game:
         self.wPause, self.hPause = self.pause_text.get_size()
         pg.display.set_icon(self.icon_img)
         pg.display.set_caption('Space Invaders')
+
+        """ Создание фоновой музыки """
+        pygame.mixer.init()
+        self.gameSound = pygame.mixer.Sound(gameMusic)
+        pygame.mixer.music.set_volume(0.4)
+
+        """ Создание игровых процессов """
+        self.isGameOver = False
+        self.isPaused = False
+
 
     # Логика моделей
     def model_update(self, pg, player, enemy, bullet):
@@ -75,6 +88,8 @@ class Game:
     def start(self, pg, enemy, player, bullet):
         isRunning = True
         while isRunning:
+            if not pygame.mixer.get_busy():
+                self.gameSound.play()
             self.model_update(pg, player, enemy, bullet)
             self.display_redraw(pg, player, enemy, bullet)
             isRunning = self.event_processing(pg, player, bullet)
